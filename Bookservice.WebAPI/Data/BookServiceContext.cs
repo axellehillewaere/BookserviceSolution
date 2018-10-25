@@ -17,6 +17,21 @@ namespace Bookservice.WebAPI.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Publisher>()
+                .Property(p => p.Created)
+                .HasDefaultValueSql("GETDATE()")
+                .ValueGeneratedOnAddOrUpdate();
+
+            modelBuilder.Entity<Author>()
+                .Property(a => a.Created)
+                .HasDefaultValueSql("GETDATE()")
+                .ValueGeneratedOnAddOrUpdate();
+
+            modelBuilder.Entity<Book>()
+                .Property(b => b.Created)
+                .HasDefaultValueSql("GETDATE()")
+                .ValueGeneratedOnAddOrUpdate();
+
+            modelBuilder.Entity<Publisher>()
                 .ToTable("Publisher")
                 .HasData(
                     new Publisher(1, "IT-Publisher", "UK"),

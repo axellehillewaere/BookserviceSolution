@@ -22,16 +22,17 @@ namespace Bookservice.WebAPI.Controllers
 
         // GET: api/Publishers
         [HttpGet]
-        public IActionResult GetPublishers()
+        public async Task<IActionResult> GetPublishers()
         {
-            return Ok(_publisherRepository.List());
+            var publishers = await _publisherRepository.ListAll();
+            return Ok(publishers);
         }
 
         // GET: api/Publishers/2
         [HttpGet("{id}")]
-        public IActionResult GetPublisher(int id)
+        public async Task<IActionResult> GetPublisher(int id)
         {
-            return Ok(_publisherRepository.GetById(id));
+            return Ok(await _publisherRepository.GetById(id));
         }
 
         [HttpPut("{id}")]
@@ -53,6 +54,31 @@ namespace Bookservice.WebAPI.Controllers
                 return NotFound();
             }
             return Ok(updatedPublisher);
+        }
+        //POST: api/publishers
+        [HttpPost]
+        public async Task<IActionResult> PostPublisher([FromBody] Publisher publisher)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            await _publisherRepository.Add(publisher);
+
+            return CreatedAtAction("GetPublisher", new { id = publisher.Id }, publisher);
+        }
+
+        //DELETE: api/Publishers/3
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePublisher([FromRoute] int id)
+        {
+            var publisher = await _publisherRepository.Delete(id);
+            if (publisher == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(publisher);
         }
     }
 }
